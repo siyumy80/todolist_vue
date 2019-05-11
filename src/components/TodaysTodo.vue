@@ -31,7 +31,6 @@ export default {
     methods:{
         todoDetail(){
             //
-            alert('a')
             this.$EventBus.$emit('viewTodoDetail', this.todoList[0])
         }
     }
