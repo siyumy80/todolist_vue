@@ -2,11 +2,11 @@
 
    <v-data-table
     :headers="headers"
-    :items="todoList"
+    :items="this.getList"
     class="elevation-1"
   >
     <template v-slot:items="props">
-      <tr @click.prevent="$router.push(`/todo/${props.item.id}`)">
+      <tr @click.prevent="$router.push(`/todo/${props.item._id}`)">
         <td>{{ props.item.date }}</td>
         <td >{{ props.item.title }}</td>
         <td>
@@ -15,7 +15,7 @@
           </v-chip> 
         </td>
         <td class="text-xs-right">
-          <v-icon @click.stop="deleteTodo(props.item.id)">delete</v-icon>
+          <v-icon @click.stop="deleteTodo(props.item._id)">delete</v-icon>
         </td>
       </tr>
     </template>
@@ -24,17 +24,21 @@
 
 </template>
 <script>
+import {mapGetters} from 'vuex';
 
 export default {
     created() {
-      this.$EventBus.$on('filterTodo',     this.filterTodoList )
+      this.$store.dispatch('getTodoList');
     },
     mounted() {
-      const TodoList = this.$api.getTodoList()
-      TodoList.then((response)=>{
-        this.todoList = response.data;
-        console.log(JSON.stringify(response.data))
-      })
+    
+    },
+    computed: {
+      // the spread operator allows to merge these mappers with other local computed properties
+      ...mapGetters([
+        'getList', // simple binding
+       
+      ])
     },
     data() {
         return {
@@ -45,36 +49,19 @@ export default {
             editable : true,
             taglist :[],
              headers: [
-              { text: 'Date' , sortable: false, value: 'date' },
+              { text: 'Date' , value: 'date' },
               { text: 'Title', value: 'title' },
-              { text: 'Tags' , value: 'hashTag' },
-              { text: ''     , value: '' },
+              { text: 'Tags' , value: 'hashTag' , sortable: false},
+              { text: ''     , value: ''  , sortable: false },
             ],
-            todoList : []
+           
         }
     },
     methods :{
-       
         deleteTodo(id) {
-          let param = {
-            id : id
-          }
-
-          this.$api.deleteTodo(param)
-          .then((response) => {
-            this.todoList = this.todoList.filter((todo) => todo.id !== id)
-          })
+          this.$store.dispatch('deleteTodo', id);
         },
-        filterTodoList(resultList) {
-          this.todoList = resultList
-        }
     },
-    computed : {
-        makeHasTags() {
-            return hashTag.join('#')
-        }
-    },
-
 }
 </script>
 

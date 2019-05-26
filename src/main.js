@@ -9,9 +9,7 @@ import store from './store'
 Vue.use(Vuetify);
 Vue.prototype.$EventBus = new Vue();
 Vue.prototype.$api = api;
-//Vue.use(VueRouter)
 Vue.config.productionTip = false
-//const router = new VueRouter({mode: 'history',routes});
 new Vue({
   render: h => h(App),
   router,

@@ -88,6 +88,7 @@
   </v-layout>
 </template>
 <script>
+
 export default {
     prop :[
       'id'
@@ -95,6 +96,7 @@ export default {
     data(){
         return {
           todo : {
+            user_id:'ymshin',
             title : '',
             desc  : '',
             tags  : [],
@@ -129,16 +131,23 @@ export default {
             this.dialog = true
             return false
           }
-          if(this.data) {
+          if(this.date) {
             this.message = '날짜를 입력해 주세요.'
             this.dialog = true
             return false
           }
-        
-          let add = this.$api.addTodo(this.todo);
-          add.then((response) => {
-            this.$router.push('/')
-          });
+          if(this.$route.params.id) {
+            this.$api.updateTodo(this.$route.params.id, this.todo)
+            .then((response) => {
+              this.$router.push('/')
+            });
+          } else {
+            let add = this.$api.addTodo(this.todo);
+            add.then((response) => {
+              this.$router.push('/')
+            });
+          }
+         
         },
         removeTag(idx) {
           this.todo.tags.splice(idx,1)
